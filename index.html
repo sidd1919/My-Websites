@@ -1,0 +1,1533 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>Virat Kohli — WikiBIdia MAC 2.0 Dashboard</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@700;900&family=DM+Sans:wght@300;400;500;600&family=Bebas+Neue&family=Space+Mono&display=swap" rel="stylesheet"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-annotation@3.0.1/dist/chartjs-plugin-annotation.min.js"></script>
+<style>
+  :root {
+    --bg: #060810;
+    --bg2: #0d1120;
+    --bg3: #111827;
+    --gold: #f5c842;
+    --gold2: #e8a020;
+    --crimson: #e63946;
+    --teal: #38b2ac;
+    --blue: #3b82f6;
+    --navy: #1a2744;
+    --text: #e8eaf0;
+    --muted: #7a8199;
+    --card: #121929;
+    --border: rgba(245,200,66,0.15);
+    --glow: 0 0 40px rgba(245,200,66,0.12);
+  }
+  *{margin:0;padding:0;box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    background:var(--bg);
+    color:var(--text);
+    font-family:'DM Sans',sans-serif;
+    overflow-x:hidden;
+    cursor:none;
+  }
+
+  /* CUSTOM CURSOR */
+  #cursor{
+    width:12px;height:12px;
+    background:var(--gold);
+    border-radius:50%;
+    position:fixed;top:0;left:0;
+    pointer-events:none;
+    z-index:9999;
+    transition:transform .15s ease;
+    mix-blend-mode:difference;
+  }
+  #cursor-ring{
+    width:36px;height:36px;
+    border:1px solid rgba(245,200,66,0.5);
+    border-radius:50%;
+    position:fixed;top:0;left:0;
+    pointer-events:none;
+    z-index:9998;
+    transition:all .25s ease;
+  }
+
+  /* NAVBAR */
+  nav{
+    position:fixed;top:0;left:0;right:0;
+    z-index:1000;
+    display:flex;align-items:center;justify-content:space-between;
+    padding:18px 48px;
+    background:rgba(6,8,16,0.85);
+    backdrop-filter:blur(20px);
+    border-bottom:1px solid var(--border);
+  }
+  .nav-logo{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:1.4rem;
+    letter-spacing:3px;
+    color:var(--gold);
+  }
+  .nav-logo span{color:var(--text);font-size:.8rem;display:block;letter-spacing:6px;font-family:'DM Sans',sans-serif;font-weight:300;}
+  .nav-links{display:flex;gap:8px;}
+  .nav-btn{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--muted);
+    padding:8px 18px;
+    border-radius:100px;
+    font-family:'DM Sans',sans-serif;
+    font-size:.78rem;
+    font-weight:500;
+    letter-spacing:1px;
+    cursor:none;
+    transition:all .3s;
+  }
+  .nav-btn:hover,.nav-btn.active{
+    background:var(--gold);
+    color:#000;
+    border-color:var(--gold);
+    transform:translateY(-1px);
+  }
+  .nav-section-indicator{
+    font-family:'Space Mono',monospace;
+    font-size:.7rem;
+    color:var(--muted);
+  }
+
+  /* PROGRESS BAR */
+  #progress-bar{
+    position:fixed;top:0;left:0;height:2px;
+    background:linear-gradient(90deg,var(--gold),var(--crimson));
+    z-index:1001;
+    transition:width .1s;
+  }
+
+  /* SECTIONS */
+  section{
+    min-height:100vh;
+    padding:120px 48px 80px;
+    position:relative;
+  }
+  .section-label{
+    font-family:'Space Mono',monospace;
+    font-size:.68rem;
+    letter-spacing:4px;
+    color:var(--gold);
+    text-transform:uppercase;
+    margin-bottom:12px;
+    opacity:.8;
+  }
+  .section-title{
+    font-family:'Playfair Display',serif;
+    font-size:clamp(2.4rem,5vw,4.5rem);
+    font-weight:900;
+    line-height:1.05;
+    margin-bottom:48px;
+  }
+  .section-title em{
+    font-style:italic;
+    color:var(--gold);
+  }
+
+  /* ========== SECTION 1: INTRO ========== */
+  #s1{
+    padding:0;
+    min-height:100vh;
+    display:flex;flex-direction:column;
+    justify-content:center;
+    position:relative;
+    overflow:hidden;
+  }
+  .hero-bg{
+    position:absolute;inset:0;
+    background:
+      radial-gradient(ellipse 80% 60% at 70% 50%, rgba(245,200,66,0.06) 0%, transparent 60%),
+      radial-gradient(ellipse 40% 40% at 20% 80%, rgba(230,57,70,0.05) 0%, transparent 50%),
+      linear-gradient(135deg, #060810 0%, #0d1120 50%, #060810 100%);
+  }
+  .hero-grid-overlay{
+    position:absolute;inset:0;
+    background-image:
+      linear-gradient(rgba(245,200,66,0.04) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(245,200,66,0.04) 1px, transparent 1px);
+    background-size:60px 60px;
+  }
+  .hero-content{
+    position:relative;z-index:2;
+    padding:120px 48px 80px;
+    max-width:1400px;
+    margin:0 auto;
+    width:100%;
+  }
+  .hero-eyebrow{
+    display:inline-flex;align-items:center;gap:12px;
+    background:rgba(245,200,66,0.08);
+    border:1px solid var(--border);
+    border-radius:100px;
+    padding:8px 20px;
+    font-size:.75rem;
+    letter-spacing:3px;
+    color:var(--gold);
+    font-family:'Space Mono',monospace;
+    text-transform:uppercase;
+    margin-bottom:32px;
+    animation:fadeSlideDown .8s ease forwards;
+  }
+  .hero-eyebrow::before{
+    content:'';
+    width:8px;height:8px;
+    background:var(--gold);
+    border-radius:50%;
+    animation:pulse 2s infinite;
+  }
+  @keyframes pulse{0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.8);}}
+  .hero-name{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:clamp(5rem,14vw,13rem);
+    line-height:.9;
+    letter-spacing:-2px;
+    color:transparent;
+    -webkit-text-stroke:1px rgba(245,200,66,0.2);
+    position:relative;
+    animation:fadeSlideUp .9s ease .1s both;
+  }
+  .hero-name .filled{
+    -webkit-text-stroke:0;
+    color:var(--text);
+  }
+  .hero-name .accent{
+    -webkit-text-stroke:0;
+    color:var(--gold);
+  }
+  .hero-tagline{
+    font-family:'Playfair Display',serif;
+    font-size:clamp(1.2rem,2.5vw,2rem);
+    font-style:italic;
+    color:var(--muted);
+    margin-top:16px;
+    margin-bottom:48px;
+    animation:fadeSlideUp .9s ease .2s both;
+  }
+  .hero-tagline strong{color:var(--text);}
+  .hero-why{
+    max-width:600px;
+    background:rgba(245,200,66,0.05);
+    border-left:3px solid var(--gold);
+    padding:20px 24px;
+    border-radius:0 12px 12px 0;
+    font-size:1rem;
+    line-height:1.7;
+    color:var(--muted);
+    margin-bottom:64px;
+    animation:fadeSlideUp .9s ease .3s both;
+  }
+  .hero-why strong{color:var(--text);}
+
+  /* KPI CARDS */
+  .kpi-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fill,minmax(160px,1fr));
+    gap:16px;
+    animation:fadeSlideUp .9s ease .4s both;
+  }
+  .kpi-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:20px;
+    position:relative;
+    overflow:hidden;
+    transition:transform .3s, box-shadow .3s;
+  }
+  .kpi-card:hover{
+    transform:translateY(-4px);
+    box-shadow:var(--glow);
+  }
+  .kpi-card::before{
+    content:'';
+    position:absolute;top:0;left:0;right:0;height:2px;
+    background:linear-gradient(90deg,var(--gold),transparent);
+  }
+  .kpi-label{
+    font-size:.68rem;
+    letter-spacing:2px;
+    color:var(--muted);
+    text-transform:uppercase;
+    font-family:'Space Mono',monospace;
+    margin-bottom:8px;
+  }
+  .kpi-value{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:2.4rem;
+    color:var(--gold);
+    line-height:1;
+  }
+  .kpi-sub{
+    font-size:.72rem;
+    color:var(--muted);
+    margin-top:4px;
+  }
+  .kpi-card.red .kpi-value{color:var(--crimson);}
+  .kpi-card.red::before{background:linear-gradient(90deg,var(--crimson),transparent);}
+  .kpi-card.teal .kpi-value{color:var(--teal);}
+  .kpi-card.teal::before{background:linear-gradient(90deg,var(--teal),transparent);}
+  .kpi-card.blue .kpi-value{color:var(--blue);}
+  .kpi-card.blue::before{background:linear-gradient(90deg,var(--blue),transparent);}
+
+  /* SCROLL INDICATOR */
+  .scroll-hint{
+    position:absolute;bottom:40px;left:50%;transform:translateX(-50%);
+    display:flex;flex-direction:column;align-items:center;gap:8px;
+    font-size:.68rem;letter-spacing:3px;color:var(--muted);
+    font-family:'Space Mono',monospace;
+    animation:bounce 2s infinite;
+  }
+  .scroll-hint::after{
+    content:'';width:1px;height:40px;
+    background:linear-gradient(var(--gold),transparent);
+  }
+  @keyframes bounce{0%,100%{transform:translateX(-50%) translateY(0);}50%{transform:translateX(-50%) translateY(8px);}}
+
+  @keyframes fadeSlideUp{from{opacity:0;transform:translateY(30px);}to{opacity:1;transform:translateY(0);}}
+  @keyframes fadeSlideDown{from{opacity:0;transform:translateY(-20px);}to{opacity:1;transform:translateY(0);}}
+
+  /* ========== SECTION 2: EARLY LIFE ========== */
+  #s2{background:var(--bg2);}
+  .two-col{display:grid;grid-template-columns:1fr 1fr;gap:48px;align-items:start;}
+
+  /* TIMELINE */
+  .timeline{position:relative;padding-left:32px;}
+  .timeline::before{
+    content:'';
+    position:absolute;left:8px;top:0;bottom:0;
+    width:1px;
+    background:linear-gradient(var(--gold),var(--crimson),transparent);
+  }
+  .tl-item{
+    position:relative;
+    margin-bottom:32px;
+    opacity:0;
+    transform:translateX(-20px);
+    transition:all .5s ease;
+  }
+  .tl-item.visible{opacity:1;transform:translateX(0);}
+  .tl-dot{
+    position:absolute;left:-28px;top:4px;
+    width:14px;height:14px;
+    border-radius:50%;
+    background:var(--gold);
+    border:3px solid var(--bg2);
+    box-shadow:0 0 0 2px var(--gold);
+  }
+  .tl-dot.red{background:var(--crimson);box-shadow:0 0 0 2px var(--crimson);}
+  .tl-dot.teal{background:var(--teal);box-shadow:0 0 0 2px var(--teal);}
+  .tl-year{
+    font-family:'Space Mono',monospace;
+    font-size:.72rem;
+    color:var(--gold);
+    letter-spacing:2px;
+    margin-bottom:4px;
+  }
+  .tl-event{
+    font-size:.92rem;
+    color:var(--text);
+    font-weight:500;
+    margin-bottom:4px;
+  }
+  .tl-desc{font-size:.8rem;color:var(--muted);line-height:1.6;}
+
+  /* MAP CARD */
+  .map-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    overflow:hidden;
+  }
+  .map-visual{
+    height:280px;
+    position:relative;
+    background:linear-gradient(135deg,#0a1628,#1a2744);
+    display:flex;align-items:center;justify-content:center;
+  }
+  /* SVG map of India simplified */
+  .india-map{
+    position:absolute;
+    opacity:.15;
+    font-size:200px;
+    color:var(--gold);
+    font-family:'Bebas Neue',sans-serif;
+  }
+  .map-pin{
+    position:absolute;
+    display:flex;flex-direction:column;align-items:center;
+    animation:pinBounce 2s ease infinite;
+  }
+  @keyframes pinBounce{0%,100%{transform:translateY(0);}50%{transform:translateY(-6px);}}
+  .map-pin-dot{
+    width:16px;height:16px;
+    background:var(--gold);
+    border-radius:50%;
+    box-shadow:0 0 20px var(--gold), 0 0 40px rgba(245,200,66,0.4);
+  }
+  .map-pin-line{width:1px;height:24px;background:var(--gold);opacity:.6;}
+  .map-pin-label{
+    background:rgba(245,200,66,0.1);
+    border:1px solid var(--border);
+    padding:4px 10px;
+    border-radius:100px;
+    font-size:.68rem;
+    letter-spacing:1px;
+    color:var(--gold);
+    font-family:'Space Mono',monospace;
+    white-space:nowrap;
+  }
+  .map-info{padding:20px;}
+  .map-info h3{font-size:1rem;margin-bottom:8px;}
+  .map-detail{display:flex;gap:16px;flex-wrap:wrap;}
+  .map-detail span{
+    font-size:.75rem;color:var(--muted);
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.06);
+    padding:4px 10px;border-radius:6px;
+  }
+
+  /* INFLUENCES */
+  .influence-grid{
+    display:grid;grid-template-columns:1fr 1fr;gap:12px;
+    margin-top:24px;
+  }
+  .influence-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;
+  }
+  .influence-card h4{font-size:.8rem;color:var(--gold);margin-bottom:4px;}
+  .influence-card p{font-size:.75rem;color:var(--muted);line-height:1.5;}
+
+  /* ========== SECTION 3: CAREER ========== */
+  #s3{background:var(--bg3);}
+  .career-phases{display:flex;flex-direction:column;gap:0;}
+  .phase{
+    display:grid;grid-template-columns:200px 1fr;gap:32px;
+    padding:32px 0;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+    opacity:0;transform:translateY(20px);transition:all .6s ease;
+  }
+  .phase.visible{opacity:1;transform:translateY(0);}
+  .phase-meta{text-align:right;}
+  .phase-years{
+    font-family:'Bebas Neue',sans-serif;
+    font-size:2rem;color:var(--gold);
+    line-height:1;
+  }
+  .phase-tag{
+    display:inline-block;
+    font-size:.65rem;letter-spacing:2px;
+    padding:4px 10px;border-radius:100px;
+    margin-top:8px;
+    font-family:'Space Mono',monospace;
+  }
+  .phase-tag.emergence{background:rgba(59,130,246,.15);color:var(--blue);}
+  .phase-tag.rise{background:rgba(56,178,172,.15);color:var(--teal);}
+  .phase-tag.dominance{background:rgba(245,200,66,.15);color:var(--gold);}
+  .phase-tag.legacy{background:rgba(230,57,70,.15);color:var(--crimson);}
+  .phase-content h3{font-size:1.2rem;margin-bottom:8px;}
+  .phase-content p{font-size:.85rem;color:var(--muted);line-height:1.7;margin-bottom:12px;}
+  .phase-milestones{display:flex;flex-wrap:wrap;gap:8px;}
+  .milestone-chip{
+    font-size:.72rem;
+    padding:4px 12px;
+    border-radius:100px;
+    background:rgba(245,200,66,0.06);
+    border:1px solid var(--border);
+    color:var(--muted);
+  }
+
+  /* CAREER CHART WRAPPER */
+  .chart-wrapper{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:20px;
+    padding:28px;
+    margin-top:48px;
+    position:relative;
+  }
+  .chart-wrapper h3{
+    font-size:1rem;font-weight:600;
+    margin-bottom:4px;
+  }
+  .chart-wrapper p{font-size:.78rem;color:var(--muted);margin-bottom:24px;}
+  .chart-annotation{
+    position:absolute;
+    background:var(--bg);
+    border:1px solid var(--gold);
+    border-radius:8px;
+    padding:6px 12px;
+    font-size:.7rem;
+    color:var(--gold);
+    font-family:'Space Mono',monospace;
+    white-space:nowrap;
+    z-index:10;
+    pointer-events:none;
+  }
+
+  /* ========== SECTION 4: STATS ========== */
+  #s4{background:var(--bg);}
+  .stats-layout{display:grid;grid-template-columns:1fr 1fr;gap:24px;}
+  .stats-layout .full{grid-column:1/-1;}
+  .chart-tabs{display:flex;gap:8px;margin-bottom:20px;}
+  .tab-btn{
+    background:transparent;
+    border:1px solid var(--border);
+    color:var(--muted);
+    padding:6px 16px;
+    border-radius:100px;
+    font-size:.75rem;
+    font-family:'DM Sans',sans-serif;
+    cursor:none;
+    transition:all .25s;
+  }
+  .tab-btn.active,.tab-btn:hover{
+    background:var(--gold);color:#000;border-color:var(--gold);
+  }
+
+  /* RECORDS TICKER */
+  .records-ticker{
+    background:var(--navy);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px 24px;
+    overflow:hidden;
+    margin-bottom:24px;
+  }
+  .ticker-label{
+    font-size:.65rem;letter-spacing:3px;
+    color:var(--gold);font-family:'Space Mono',monospace;
+    margin-bottom:8px;
+  }
+  .ticker-track{
+    display:flex;gap:48px;
+    animation:tickerScroll 20s linear infinite;
+    white-space:nowrap;
+  }
+  @keyframes tickerScroll{from{transform:translateX(0);}to{transform:translateX(-50%);};}
+  .ticker-item{
+    font-size:.8rem;
+    color:var(--text);
+    font-weight:500;
+    flex-shrink:0;
+  }
+  .ticker-item span{color:var(--gold);}
+
+  /* FORMAT COMPARISON */
+  .format-tabs{display:flex;gap:0;margin-bottom:24px;border-radius:12px;overflow:hidden;border:1px solid var(--border);}
+  .fmt-btn{
+    flex:1;padding:10px;
+    background:transparent;
+    color:var(--muted);
+    font-family:'DM Sans',sans-serif;
+    font-size:.8rem;font-weight:500;
+    cursor:none;
+    transition:all .25s;
+    border:none;
+  }
+  .fmt-btn.active{background:var(--gold);color:#000;}
+
+  /* STAT BARS */
+  .stat-bar-item{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+  .stat-bar-label{width:160px;font-size:.8rem;color:var(--muted);text-align:right;}
+  .stat-bar-track{flex:1;height:6px;background:rgba(255,255,255,0.05);border-radius:3px;overflow:hidden;}
+  .stat-bar-fill{height:100%;border-radius:3px;transition:width 1s ease;}
+  .stat-bar-fill.gold{background:linear-gradient(90deg,var(--gold2),var(--gold));}
+  .stat-bar-fill.red{background:linear-gradient(90deg,#a00,var(--crimson));}
+  .stat-bar-fill.teal{background:linear-gradient(90deg,#1a7a77,var(--teal));}
+  .stat-bar-val{width:60px;font-size:.8rem;color:var(--text);font-family:'Space Mono',monospace;}
+
+  /* TROPHIES */
+  .trophy-shelf{
+    display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:12px;
+  }
+  .trophy-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:12px;
+    padding:16px;text-align:center;
+    transition:transform .3s;
+  }
+  .trophy-card:hover{transform:translateY(-4px);}
+  .trophy-icon{font-size:1.6rem;margin-bottom:8px;font-family:'Bebas Neue',sans-serif;color:var(--gold);}
+  .trophy-name{font-size:.72rem;color:var(--text);font-weight:600;margin-bottom:2px;}
+  .trophy-year{font-size:.65rem;color:var(--muted);font-family:'Space Mono',monospace;}
+
+  /* RADAR PLACEHOLDER */
+  .radar-wrap{max-width:340px;margin:0 auto;}
+
+  /* ========== SECTION 5: PERSONAL ========== */
+  #s5{background:var(--bg2);}
+  .personal-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:20px;}
+  .personal-card{
+    background:var(--card);
+    border:1px solid var(--border);
+    border-radius:16px;
+    padding:24px;
+  }
+  .personal-card h3{font-size:.85rem;letter-spacing:2px;color:var(--gold);font-family:'Space Mono',monospace;text-transform:uppercase;margin-bottom:16px;}
+  .trait-list{display:flex;flex-wrap:wrap;gap:8px;}
+  .trait-chip{
+    font-size:.75rem;
+    padding:5px 12px;
+    border-radius:100px;
+    border:1px solid var(--border);
+    color:var(--text);
+    background:rgba(255,255,255,0.03);
+    transition:all .25s;
+  }
+  .trait-chip:hover{border-color:var(--gold);color:var(--gold);}
+
+  /* SENTIMENT */
+  .sentiment-bar-wrap{margin-top:16px;}
+  .sentiment-bar{
+    display:flex;height:10px;border-radius:5px;overflow:hidden;margin-bottom:8px;
+  }
+  .sent-pos{background:linear-gradient(90deg,var(--teal),#2dd4bf);}
+  .sent-neu{background:rgba(255,255,255,0.1);}
+  .sent-neg{background:linear-gradient(90deg,var(--crimson),#f87171);}
+  .sent-labels{display:flex;justify-content:space-between;font-size:.68rem;color:var(--muted);}
+
+  /* WORD CLOUD */
+  .word-cloud{
+    display:flex;flex-wrap:wrap;gap:10px;
+    padding:8px 0;
+    align-items:center;
+  }
+  .wc-word{
+    font-family:'DM Sans',sans-serif;
+    font-weight:600;
+    color:var(--muted);
+    cursor:default;
+    transition:color .3s;
+  }
+  .wc-word:hover{color:var(--gold);}
+
+  /* IMPACT METRICS */
+  .impact-stat{
+    display:flex;justify-content:space-between;align-items:center;
+    padding:10px 0;
+    border-bottom:1px solid rgba(255,255,255,0.05);
+  }
+  .impact-stat:last-child{border-bottom:none;}
+  .impact-stat-label{font-size:.82rem;color:var(--muted);}
+  .impact-stat-val{font-family:'Bebas Neue',sans-serif;font-size:1.4rem;color:var(--gold);}
+
+  /* FOOTER */
+  footer{
+    background:var(--bg);
+    border-top:1px solid var(--border);
+    padding:40px 48px;
+    text-align:center;
+  }
+  .footer-logo{font-family:'Bebas Neue',sans-serif;font-size:2rem;color:var(--gold);letter-spacing:4px;}
+  .footer-sub{font-size:.75rem;color:var(--muted);margin-top:8px;line-height:1.8;}
+  .footer-sources{
+    display:flex;flex-wrap:wrap;gap:12px;justify-content:center;margin-top:20px;
+  }
+  .source-tag{
+    font-size:.68rem;
+    color:var(--muted);
+    background:rgba(255,255,255,0.03);
+    border:1px solid rgba(255,255,255,0.06);
+    padding:4px 12px;border-radius:100px;
+  }
+
+  /* DIVIDER */
+  .divider{
+    width:80px;height:1px;
+    background:linear-gradient(90deg,transparent,var(--gold),transparent);
+    margin:32px 0;
+  }
+
+  /* AI INSIGHT */
+  .ai-insight{
+    display:flex;gap:12px;
+    background:rgba(59,130,246,0.06);
+    border:1px solid rgba(59,130,246,0.2);
+    border-radius:12px;
+    padding:16px;
+    margin-top:16px;
+  }
+  .ai-badge{
+    flex-shrink:0;
+    width:32px;height:32px;
+    background:var(--blue);
+    border-radius:8px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:.6rem;font-weight:700;letter-spacing:.5px;color:#fff;
+    font-family:'Space Mono',monospace;
+  }
+  .ai-text{font-size:.8rem;color:var(--muted);line-height:1.6;}
+  .ai-text strong{color:var(--text);}
+
+  /* SMART ANNOTATION */
+  .smart-tag{
+    display:inline-flex;align-items:center;gap:6px;
+    background:rgba(245,200,66,0.1);
+    border:1px solid rgba(245,200,66,0.3);
+    border-radius:6px;
+    padding:3px 10px;
+    font-size:.68rem;
+    color:var(--gold);
+    font-family:'Space Mono',monospace;
+    margin-left:8px;
+  }
+  .smart-tag::before{content:'*';color:var(--crimson);}
+
+  /* NAV SECTION SCROLL */
+  .scroll-nav{
+    position:fixed;right:24px;top:50%;transform:translateY(-50%);
+    display:flex;flex-direction:column;gap:12px;
+    z-index:500;
+  }
+  .scroll-dot{
+    width:8px;height:8px;
+    border-radius:50%;
+    background:rgba(255,255,255,0.15);
+    cursor:none;
+    transition:all .3s;
+    position:relative;
+  }
+  .scroll-dot::after{
+    content:attr(data-label);
+    position:absolute;right:18px;top:50%;transform:translateY(-50%);
+    font-size:.65rem;letter-spacing:1px;color:var(--gold);
+    font-family:'Space Mono',monospace;
+    opacity:0;transition:.3s;white-space:nowrap;
+    pointer-events:none;
+  }
+  .scroll-dot:hover::after,.scroll-dot.active::after{opacity:1;}
+  .scroll-dot.active{background:var(--gold);transform:scale(1.5);}
+  .scroll-dot:hover{background:var(--gold);transform:scale(1.2);}
+
+  /* RESPONSIVE */
+  @media(max-width:900px){
+    nav{padding:16px 24px;}
+    .nav-links{gap:4px;}
+    .nav-btn{padding:6px 10px;font-size:.68rem;}
+    section{padding:100px 24px 60px;}
+    .two-col,.stats-layout,.personal-grid{grid-template-columns:1fr;}
+    .stats-layout .full{grid-column:1;}
+    .phase{grid-template-columns:1fr;}
+    .phase-meta{text-align:left;}
+    .hero-content{padding:100px 24px 60px;}
+    footer{padding:32px 24px;}
+    .scroll-nav{display:none;}
+  }
+</style>
+</head>
+<body>
+
+<!-- CUSTOM CURSOR -->
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+
+<!-- PROGRESS BAR -->
+<div id="progress-bar"></div>
+
+<!-- SCROLL NAV DOTS -->
+<div class="scroll-nav">
+  <div class="scroll-dot active" data-label="INTRO" data-target="s1" onclick="scrollTo(document.getElementById('s1'))"></div>
+  <div class="scroll-dot" data-label="EARLY LIFE" data-target="s2" onclick="scrollTo(document.getElementById('s2'))"></div>
+  <div class="scroll-dot" data-label="CAREER" data-target="s3" onclick="scrollTo(document.getElementById('s3'))"></div>
+  <div class="scroll-dot" data-label="STATISTICS" data-target="s4" onclick="scrollTo(document.getElementById('s4'))"></div>
+  <div class="scroll-dot" data-label="LEGACY" data-target="s5" onclick="scrollTo(document.getElementById('s5'))"></div>
+</div>
+
+<!-- NAVBAR -->
+<nav>
+  <div class="nav-logo">WikiBIdia <span>MAC 2.0 | CHALLENGE II</span></div>
+  <div class="nav-links">
+    <button class="nav-btn active" onclick="scrollToSection('s1')">01 Intro</button>
+    <button class="nav-btn" onclick="scrollToSection('s2')">02 Early Life</button>
+    <button class="nav-btn" onclick="scrollToSection('s3')">03 Career</button>
+    <button class="nav-btn" onclick="scrollToSection('s4')">04 Stats</button>
+    <button class="nav-btn" onclick="scrollToSection('s5')">05 Legacy</button>
+  </div>
+  <div class="nav-section-indicator" id="section-indicator">01 / 05</div>
+</nav>
+
+<!-- ======================== SECTION 1: INTRO ======================== -->
+<section id="s1">
+  <div class="hero-bg"></div>
+  <div class="hero-grid-overlay"></div>
+  <div class="hero-content">
+    <div class="hero-eyebrow">Cricket Legend &mdash; Sport Genre &mdash; India</div>
+    <div class="hero-name">
+      <span class="filled">VIRAT</span><br>
+      <span class="accent">KOHLI</span>
+    </div>
+    <div class="hero-tagline">The <strong>King</strong> of Modern Cricket</div>
+    <div class="hero-why">
+      <strong>Why Virat Kohli matters:</strong> In an era of explosive, format-driven cricket, Kohli redefined what consistency looks like — becoming the highest-scoring batter in T20I history, the fastest to 50 ODI centuries, and the undisputed face of Indian cricket for over a decade. His story is one of <strong>relentless reinvention, hunger, and elite athletic discipline</strong>.
+    </div>
+    <div class="kpi-grid">
+      <div class="kpi-card">
+        <div class="kpi-label">Test Runs</div>
+        <div class="kpi-value" id="cnt-test">0</div>
+        <div class="kpi-sub">avg 47.60 | 30 tons</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">ODI Runs</div>
+        <div class="kpi-value" id="cnt-odi">0</div>
+        <div class="kpi-sub">avg 57.32 | 50 tons</div>
+      </div>
+      <div class="kpi-card teal">
+        <div class="kpi-label">T20I Runs</div>
+        <div class="kpi-value" id="cnt-t20">0</div>
+        <div class="kpi-sub">avg 52.73 | 1 ton</div>
+      </div>
+      <div class="kpi-card blue">
+        <div class="kpi-label">Centuries</div>
+        <div class="kpi-value" id="cnt-tons">0</div>
+        <div class="kpi-sub">All formats combined</div>
+      </div>
+      <div class="kpi-card">
+        <div class="kpi-label">IPL Runs</div>
+        <div class="kpi-value" id="cnt-ipl">0</div>
+        <div class="kpi-sub">Most in IPL history</div>
+      </div>
+      <div class="kpi-card red">
+        <div class="kpi-label">Intl Matches</div>
+        <div class="kpi-value" id="cnt-matches">0</div>
+        <div class="kpi-sub">Tests + ODIs + T20Is</div>
+      </div>
+      <div class="kpi-card teal">
+        <div class="kpi-label">World Cups</div>
+        <div class="kpi-value">3</div>
+        <div class="kpi-sub">ICC titles (T20 WC 2024)</div>
+      </div>
+      <div class="kpi-card gold">
+        <div class="kpi-label">ICC #1 Rank</div>
+        <div class="kpi-value" style="color:var(--gold)">900+</div>
+        <div class="kpi-sub">Peak ICC rating</div>
+      </div>
+    </div>
+  </div>
+  <div class="scroll-hint">SCROLL</div>
+</section>
+
+<!-- ======================== SECTION 2: EARLY LIFE ======================== -->
+<section id="s2">
+  <div class="section-label">Section 02 — Origin Story</div>
+  <div class="section-title">The Making of a <em>Champion</em></div>
+
+  <div class="two-col">
+    <!-- TIMELINE -->
+    <div>
+      <div class="timeline">
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">5 NOV 1988</div>
+          <div class="tl-event">Born in Delhi, India</div>
+          <div class="tl-desc">Born to Prem Kohli (a criminal lawyer) and Saroj Kohli in Uttam Nagar, West Delhi. Raised in a middle-class household with an elder brother Vikas and sister Bhavna.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">1994</div>
+          <div class="tl-event">First cricket bat at age 3</div>
+          <div class="tl-desc">Kohli's father gifted him a cricket bat at the age of three, noticing his unusual fascination with the sport. He would mimic batting stances obsessively.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot teal"></div>
+          <div class="tl-year">1998</div>
+          <div class="tl-event">Enrolled at West Delhi Cricket Academy</div>
+          <div class="tl-desc">Joined the Academy under coach Rajkumar Sharma at age 9. Showed exceptional talent — hard-working, disciplined and technically sound from a very young age.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot"></div>
+          <div class="tl-year">2002</div>
+          <div class="tl-event">Delhi Under-15 Selection</div>
+          <div class="tl-desc">Selected for Delhi U-15 team, performing consistently in youth tournaments. His hunger to improve set him apart from peers.</div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot red"></div>
+          <div class="tl-year">18 DEC 2006</div>
+          <div class="tl-event">Father passed away — he played next morning</div>
+          <div class="tl-desc">His father Prem Kohli died of a brain stroke. Kohli played in the Ranji Trophy match against Karnataka the very next morning, scoring 90, then rushed for the last rites. This moment defined his character.</div>
+          <div class="ai-insight" style="margin-top:10px;">
+            <div class="ai-badge">AI</div>
+            <div class="ai-text"><strong>"This year changed everything."</strong> No single act defined Kohli's mental fortitude more than playing Ranji cricket within 24 hours of losing his father — a widely cited testament to his professionalism and resolve.</div>
+          </div>
+        </div>
+        <div class="tl-item">
+          <div class="tl-dot teal"></div>
+          <div class="tl-year">2008</div>
+          <div class="tl-event">Led India to U-19 World Cup victory</div>
+          <div class="tl-desc">Captained India's Under-19 team to World Cup triumph in Malaysia, cementing his status as a future superstar and earning him the captaincy mantle early.</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- MAP + INFLUENCES -->
+    <div>
+      <div class="map-card">
+        <div class="map-visual">
+          <div class="india-map">IND</div>
+          <!-- Simplified India shape suggestion -->
+          <svg width="220" height="260" viewBox="0 0 220 260" opacity=".25" style="position:absolute;">
+            <path d="M70,20 L130,15 L160,40 L175,80 L180,120 L170,160 L140,200 L110,240 L90,240 L60,200 L40,155 L30,110 L40,70 Z" fill="none" stroke="#f5c842" stroke-width="1.5"/>
+          </svg>
+          <div class="map-pin" style="position:absolute;top:38%;left:48%;">
+            <div class="map-pin-dot"></div>
+            <div class="map-pin-line"></div>
+            <div class="map-pin-label">New Delhi, 1988</div>
+          </div>
+        </div>
+        <div class="map-info">
+          <h3>Birthplace &amp; Background</h3>
+          <div class="map-detail">
+            <span>Delhi, India</span>
+            <span>Middle Class Family</span>
+            <span>Kshatriya Heritage</span>
+            <span>West Delhi upbringing</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="divider"></div>
+
+      <h3 style="font-size:1rem;margin-bottom:16px;color:var(--text);">Key Influences &amp; Formative Pillars</h3>
+      <div class="influence-grid">
+        <div class="influence-card">
+          <h4>Coach Rajkumar Sharma</h4>
+          <p>Shaped Kohli's technical foundation and mental toughness at the West Delhi Cricket Academy from age 9.</p>
+        </div>
+        <div class="influence-card">
+          <h4>Father — Prem Kohli</h4>
+          <p>His biggest supporter who would drive him to midnight practice sessions despite long work hours.</p>
+        </div>
+        <div class="influence-card">
+          <h4>Sachin Tendulkar</h4>
+          <p>Kohli's childhood idol. The torch of Indian batting excellence passed from Tendulkar directly to Kohli's generation.</p>
+        </div>
+        <div class="influence-card">
+          <h4>U-19 World Cup 2008</h4>
+          <p>Captaining India to glory at 19 gave Kohli his first taste of tournament leadership and international credibility.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== SECTION 3: CAREER ======================== -->
+<section id="s3">
+  <div class="section-label">Section 03 — Professional Journey</div>
+  <div class="section-title">A Career Told in <em>Phases</em></div>
+
+  <div class="career-phases">
+    <div class="phase">
+      <div class="phase-meta">
+        <div class="phase-years">2008–11</div>
+        <span class="phase-tag emergence">EMERGENCE</span>
+      </div>
+      <div class="phase-content">
+        <h3>The Young Maverick</h3>
+        <p>Kohli made his ODI debut on August 18, 2008, against Sri Lanka. Initially raw and inconsistent, his aggressive style divided opinion. He struggled for form but showed flashes of brilliance. Selected for 2011 ODI World Cup squad as the team's youngest member.</p>
+        <div class="phase-milestones">
+          <span class="milestone-chip">ODI debut 2008</span>
+          <span class="milestone-chip">Test debut 2011</span>
+          <span class="milestone-chip">World Cup 2011 winner</span>
+          <span class="milestone-chip">First ODI century 2008</span>
+        </div>
+        <div class="smart-tag">Pivotal moment</div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-meta">
+        <div class="phase-years">2011–14</div>
+        <span class="phase-tag rise">RISE</span>
+      </div>
+      <div class="phase-content">
+        <h3>The Run Machine Emerges</h3>
+        <p>Post-2011 World Cup, Kohli transformed into India's most reliable batter across formats. His ODI average soared above 50, and he emerged as the successor to Sachin Tendulkar's legacy. The 2012 Asia Cup against Sri Lanka (183 runs off 148 balls) announced his arrival on the world stage.</p>
+        <div class="phase-milestones">
+          <span class="milestone-chip">183 vs Sri Lanka (2012)</span>
+          <span class="milestone-chip">3 consecutive ODI centuries</span>
+          <span class="milestone-chip">ICC ODI Cricketer 2012</span>
+          <span class="milestone-chip">First Test ton at Adelaide</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-meta">
+        <div class="phase-years">2014–19</div>
+        <span class="phase-tag dominance">DOMINANCE</span>
+      </div>
+      <div class="phase-content">
+        <h3>Captain. Champion. Conqueror.</h3>
+        <p>Named Test captain in 2014, then full captain across all formats by 2017. Under his leadership, India rose to No. 1 in Tests, won 40 of 65 Tests. He became the fastest to 10,000 ODI runs and scored 50 international centuries. Arguably the best batter in all three formats simultaneously.</p>
+        <div class="phase-milestones">
+          <span class="milestone-chip">Test captain 2014</span>
+          <span class="milestone-chip">India #1 Test ranking</span>
+          <span class="milestone-chip">ICC No.1 batter (all formats)</span>
+          <span class="milestone-chip">Wisden Cricketer of Decade 2010s</span>
+          <span class="milestone-chip">10,000 ODI runs fastest</span>
+        </div>
+        <div class="ai-insight">
+          <div class="ai-badge">AI</div>
+          <div class="ai-text"><strong>"The peak that redefined greatness."</strong> From 2016–2019, Kohli averaged 77.66 in ODIs and 59.80 in Tests simultaneously — a cross-format dominance with no modern parallel in cricket history.</div>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-meta">
+        <div class="phase-years">2019–22</div>
+        <span class="phase-tag rise">TRANSITION</span>
+      </div>
+      <div class="phase-content">
+        <h3>The Drought &amp; the Return</h3>
+        <p>A century drought lasting 1020 days tested Kohli's resolve. He stepped down as Test captain in January 2022, ended his T20I captaincy after the 2021 T20 World Cup. Critics questioned his form — but Kohli had weathered storms before.</p>
+        <div class="phase-milestones">
+          <span class="milestone-chip">Centurion drought 2019–22</span>
+          <span class="milestone-chip">Captaincy relinquished</span>
+          <span class="milestone-chip">Scored 71st ton (Asia Cup 2022)</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="phase">
+      <div class="phase-meta">
+        <div class="phase-years">2022–25</div>
+        <span class="phase-tag legacy">LEGACY</span>
+      </div>
+      <div class="phase-content">
+        <h3>The King Reclaims the Throne</h3>
+        <p>The comeback was emphatic. 50th ODI century in 2023, T20 World Cup winner in 2024, ICC Men's T20I Cricketer of the Year 2023. In the 2023 ODI World Cup, Kohli was the tournament's highest scorer with 765 runs including 3 hundreds — the best individual World Cup batting performance in history.</p>
+        <div class="phase-milestones">
+          <span class="milestone-chip">T20 World Cup 2024 winner</span>
+          <span class="milestone-chip">50th ODI century 2023</span>
+          <span class="milestone-chip">ICC T20I Cricketer 2023</span>
+          <span class="milestone-chip">World Cup 2023 top scorer</span>
+        </div>
+        <div class="smart-tag">This year changed everything</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- CAREER RUNS CHART -->
+  <div class="chart-wrapper">
+    <h3>Career Run Accumulation — ODI Format</h3>
+    <p>Year-wise ODI run tally illustrating Kohli's sustained dominance over 15+ years</p>
+    <canvas id="careerChart" height="100"></canvas>
+  </div>
+</section>
+
+<!-- ======================== SECTION 4: STATS ======================== -->
+<section id="s4">
+  <div class="section-label">Section 04 — Analytical Core</div>
+  <div class="section-title">Numbers That <em>Redefine</em> the Game</div>
+
+  <!-- RECORDS TICKER -->
+  <div class="records-ticker">
+    <div class="ticker-label">WORLD RECORDS &amp; HISTORIC MILESTONES</div>
+    <div class="ticker-track" id="tickerTrack">
+      <span class="ticker-item">Most T20I runs — <span>4188 runs</span></span>
+      <span class="ticker-item">Fastest to 50 ODI centuries — <span>453 innings</span></span>
+      <span class="ticker-item">Most ODI centuries — <span>50 (all-time record)</span></span>
+      <span class="ticker-item">Most runs in a single ODI World Cup — <span>765 runs (2023)</span></span>
+      <span class="ticker-item">Most IPL runs — <span>8000+</span></span>
+      <span class="ticker-item">Test average at No.4 — <span>47.60</span></span>
+      <span class="ticker-item">Most 50+ scores in T20Is — <span>38</span></span>
+      <span class="ticker-item">ICC No.1 batter — <span>All 3 formats simultaneously</span></span>
+      <!-- Duplicate for seamless loop -->
+      <span class="ticker-item">Most T20I runs — <span>4188 runs</span></span>
+      <span class="ticker-item">Fastest to 50 ODI centuries — <span>453 innings</span></span>
+      <span class="ticker-item">Most ODI centuries — <span>50 (all-time record)</span></span>
+      <span class="ticker-item">Most runs in a single ODI World Cup — <span>765 runs (2023)</span></span>
+      <span class="ticker-item">Most IPL runs — <span>8000+</span></span>
+      <span class="ticker-item">Test average at No.4 — <span>47.60</span></span>
+      <span class="ticker-item">Most 50+ scores in T20Is — <span>38</span></span>
+      <span class="ticker-item">ICC No.1 batter — <span>All 3 formats simultaneously</span></span>
+    </div>
+  </div>
+
+  <div class="stats-layout">
+    <!-- FORMAT TABS + BAR CHART -->
+    <div class="chart-wrapper">
+      <h3>Annual Run Production</h3>
+      <p>Select format to explore year-wise performance</p>
+      <div class="chart-tabs">
+        <button class="tab-btn active" onclick="switchFormat('odi',this)">ODI</button>
+        <button class="tab-btn" onclick="switchFormat('test',this)">TEST</button>
+        <button class="tab-btn" onclick="switchFormat('t20',this)">T20I</button>
+        <button class="tab-btn" onclick="switchFormat('ipl',this)">IPL</button>
+      </div>
+      <canvas id="formatChart" height="180"></canvas>
+    </div>
+
+    <!-- RADAR CHART -->
+    <div class="chart-wrapper">
+      <h3>Batting Skill Radar</h3>
+      <p>AI-assessed skill profile compared to format averages</p>
+      <div class="radar-wrap">
+        <canvas id="radarChart" height="240"></canvas>
+      </div>
+      <div class="ai-insight">
+        <div class="ai-badge">AI</div>
+        <div class="ai-text">AI analysis of Kohli's public match data shows <strong>off-side dominance</strong>, elite <strong>chase conversion</strong> (avg 86.3 in chases) and exceptional <strong>pressure performance</strong> vs. pace above 140km/h.</div>
+      </div>
+    </div>
+
+    <!-- STAT BARS -->
+    <div class="chart-wrapper">
+      <h3>Format Comparison — Key Metrics</h3>
+      <p>Normalized across all international formats</p>
+      <div id="statBars">
+        <div class="stat-bar-item"><div class="stat-bar-label">ODI Average</div><div class="stat-bar-track"><div class="stat-bar-fill gold" style="width:0%" data-w="91.7%"></div></div><div class="stat-bar-val">57.32</div></div>
+        <div class="stat-bar-item"><div class="stat-bar-label">Test Average</div><div class="stat-bar-track"><div class="stat-bar-fill gold" style="width:0%" data-w="76.2%"></div></div><div class="stat-bar-val">47.60</div></div>
+        <div class="stat-bar-item"><div class="stat-bar-label">T20I Average</div><div class="stat-bar-track"><div class="stat-bar-fill teal" style="width:0%" data-w="84.5%"></div></div><div class="stat-bar-val">52.73</div></div>
+        <div class="stat-bar-item"><div class="stat-bar-label">Strike Rate ODI</div><div class="stat-bar-track"><div class="stat-bar-fill red" style="width:0%" data-w="72%"></div></div><div class="stat-bar-val">93.25</div></div>
+        <div class="stat-bar-item"><div class="stat-bar-label">Strike Rate T20</div><div class="stat-bar-track"><div class="stat-bar-fill red" style="width:0%" data-w="88%"></div></div><div class="stat-bar-val">139.11</div></div>
+        <div class="stat-bar-item"><div class="stat-bar-label">ODI Centuries</div><div class="stat-bar-track"><div class="stat-bar-fill gold" style="width:0%" data-w="100%"></div></div><div class="stat-bar-val">50 (WR)</div></div>
+        <div class="stat-bar-item"><div class="stat-bar-label">Conversion Rate</div><div class="stat-bar-track"><div class="stat-bar-fill teal" style="width:0%" data-w="62%"></div></div><div class="stat-bar-val">61.8%</div></div>
+      </div>
+    </div>
+
+    <!-- CENTURY CHART -->
+    <div class="chart-wrapper">
+      <h3>Century Milestones Timeline</h3>
+      <p>How Kohli's century count grew over his career</p>
+      <canvas id="centuryChart" height="180"></canvas>
+    </div>
+
+    <!-- TROPHIES -->
+    <div class="chart-wrapper full">
+      <h3>Trophies, Awards &amp; Honors</h3>
+      <p>Major titles and recognition across a 17-year career</p>
+      <div class="trophy-shelf">
+        <div class="trophy-card"><div class="trophy-icon">WC</div><div class="trophy-name">ICC T20 World Cup</div><div class="trophy-year">2024</div></div>
+        <div class="trophy-card"><div class="trophy-icon">WC</div><div class="trophy-name">ICC ODI World Cup</div><div class="trophy-year">2011</div></div>
+        <div class="trophy-card"><div class="trophy-icon">CT</div><div class="trophy-name">ICC Champions Trophy</div><div class="trophy-year">2013</div></div>
+        <div class="trophy-card"><div class="trophy-icon">IPL</div><div class="trophy-name">IPL Winner (RCB)</div><div class="trophy-year">2016 (runner)</div></div>
+        <div class="trophy-card"><div class="trophy-icon">WD</div><div class="trophy-name">Wisden Cricketer Decade</div><div class="trophy-year">2010s</div></div>
+        <div class="trophy-card"><div class="trophy-icon">PB</div><div class="trophy-name">Padma Bhushan</div><div class="trophy-year">2017</div></div>
+        <div class="trophy-card"><div class="trophy-icon">RS</div><div class="trophy-name">Rajiv Gandhi Khel Ratna</div><div class="trophy-year">2018</div></div>
+        <div class="trophy-card"><div class="trophy-icon">ICC</div><div class="trophy-name">ICC Cricketer of the Year</div><div class="trophy-year">2017, 2018, 2023</div></div>
+        <div class="trophy-card"><div class="trophy-icon">ICC</div><div class="trophy-name">ICC ODI Player of Year</div><div class="trophy-year">2012, 2017, 2018</div></div>
+        <div class="trophy-card"><div class="trophy-icon">SA</div><div class="trophy-name">Sir Garfield Sobers Trophy</div><div class="trophy-year">2017, 2018</div></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================== SECTION 5: PERSONAL ======================== -->
+<section id="s5">
+  <div class="section-label">Section 05 — Beyond the Boundary</div>
+  <div class="section-title">The <em>Man</em> Behind the Legend</div>
+
+  <div class="personal-grid">
+    <!-- PERSONALITY -->
+    <div class="personal-card">
+      <h3>Personality Traits</h3>
+      <div class="trait-list">
+        <span class="trait-chip">Obsessive Competitor</span>
+        <span class="trait-chip">Fitness Fanatic</span>
+        <span class="trait-chip">Vocal Leader</span>
+        <span class="trait-chip">Emotional Intelligence</span>
+        <span class="trait-chip">Aggressive Starter</span>
+        <span class="trait-chip">Detail-Oriented</span>
+        <span class="trait-chip">Mental Resilience</span>
+        <span class="trait-chip">Passionate Communicator</span>
+        <span class="trait-chip">Team-first Mindset</span>
+        <span class="trait-chip">Authenticity</span>
+      </div>
+      <div class="divider" style="margin:16px 0;"></div>
+      <p style="font-size:.8rem;color:var(--muted);line-height:1.7;">Known for celebrating teammates' successes as loudly as his own. His on-field intensity is matched by genuine warmth off it. Advocates openly for mental health and physical fitness as career fundamentals.</p>
+    </div>
+
+    <!-- RELATIONSHIPS & LIFE -->
+    <div class="personal-card">
+      <h3>Life &amp; Relationships</h3>
+      <div style="display:flex;flex-direction:column;gap:12px;">
+        <div class="impact-stat">
+          <div class="impact-stat-label">Married to</div>
+          <div class="impact-stat-val" style="font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--text);">Anushka Sharma</div>
+        </div>
+        <div class="impact-stat">
+          <div class="impact-stat-label">Wedding Year</div>
+          <div class="impact-stat-val">2017</div>
+        </div>
+        <div class="impact-stat">
+          <div class="impact-stat-label">Children</div>
+          <div class="impact-stat-val" style="font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--text);">Vamika (2021), Akaay (2024)</div>
+        </div>
+        <div class="impact-stat">
+          <div class="impact-stat-label">Diet Philosophy</div>
+          <div class="impact-stat-val" style="font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--text);">Plant-based (vegan since 2018)</div>
+        </div>
+        <div class="impact-stat">
+          <div class="impact-stat-label">Religion</div>
+          <div class="impact-stat-val" style="font-size:.9rem;font-family:'DM Sans',sans-serif;color:var(--text);">Hinduism</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- PHILANTHROPY -->
+    <div class="personal-card">
+      <h3>Philanthropy</h3>
+      <div style="display:flex;flex-direction:column;gap:10px;">
+        <div style="font-size:.82rem;color:var(--muted);line-height:1.6;padding-bottom:10px;border-bottom:1px solid rgba(255,255,255,0.06);">
+          <strong style="color:var(--text);">Virat Kohli Foundation (VKF)</strong> — focused on underprivileged children's welfare, sports development, and healthcare access.
+        </div>
+        <div class="impact-stat"><div class="impact-stat-label">COVID Relief 2021</div><div class="impact-stat-val" style="font-size:1rem;">2Cr+</div></div>
+        <div class="impact-stat"><div class="impact-stat-label">Annual VKF Events</div><div class="impact-stat-val">10+</div></div>
+        <div class="impact-stat"><div class="impact-stat-label">Social causes backed</div><div class="impact-stat-val">15+</div></div>
+        <div style="font-size:.78rem;color:var(--muted);">Also supports anti-tobacco campaigns, girl child empowerment, and wildlife conservation.</div>
+      </div>
+    </div>
+
+    <!-- SENTIMENT -->
+    <div class="personal-card" style="grid-column:1/-1;">
+      <h3>Public Sentiment Analysis</h3>
+      <p style="font-size:.78rem;color:var(--muted);margin-bottom:16px;">AI-derived sentiment landscape from aggregated public media coverage, social discourse, and fan commentary (approximate, based on public data patterns).</p>
+      <div class="sentiment-bar-wrap">
+        <div class="sentiment-bar">
+          <div class="sent-pos" style="width:72%"></div>
+          <div class="sent-neu" style="width:18%"></div>
+          <div class="sent-neg" style="width:10%"></div>
+        </div>
+        <div class="sent-labels">
+          <span>Positive — 72%</span>
+          <span>Neutral — 18%</span>
+          <span>Critical — 10%</span>
+        </div>
+      </div>
+      <div style="margin-top:20px;display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+        <div>
+          <div style="font-size:.72rem;color:var(--muted);letter-spacing:2px;margin-bottom:12px;">POPULAR ASSOCIATIONS</div>
+          <div class="word-cloud">
+            <span class="wc-word" style="font-size:1.6rem;">King</span>
+            <span class="wc-word" style="font-size:1.1rem;">Chaser</span>
+            <span class="wc-word" style="font-size:1.4rem;">Legend</span>
+            <span class="wc-word" style="font-size:.9rem;">Fitness</span>
+            <span class="wc-word" style="font-size:1.2rem;">Intensity</span>
+            <span class="wc-word" style="font-size:.85rem;">Leadership</span>
+            <span class="wc-word" style="font-size:1.5rem;">Consistent</span>
+            <span class="wc-word" style="font-size:.9rem;">Iconic</span>
+            <span class="wc-word" style="font-size:1.3rem;">Champion</span>
+            <span class="wc-word" style="font-size:.8rem;">Inspiring</span>
+            <span class="wc-word" style="font-size:1.1rem;">Record</span>
+            <span class="wc-word" style="font-size:2rem;">GOAT</span>
+          </div>
+        </div>
+        <div>
+          <div style="font-size:.72rem;color:var(--muted);letter-spacing:2px;margin-bottom:12px;">GLOBAL IMPACT METRICS</div>
+          <div class="impact-stat"><div class="impact-stat-label">Instagram followers (2024)</div><div class="impact-stat-val">269M</div></div>
+          <div class="impact-stat"><div class="impact-stat-label">Brand value (est.)</div><div class="impact-stat-val">$237M</div></div>
+          <div class="impact-stat"><div class="impact-stat-label">Jersey sales in India</div><div class="impact-stat-val">#1</div></div>
+          <div class="impact-stat"><div class="impact-stat-label">Endorsements active</div><div class="impact-stat-val">25+</div></div>
+        </div>
+      </div>
+      <div class="ai-insight" style="margin-top:20px;">
+        <div class="ai-badge">AI</div>
+        <div class="ai-text"><strong>Legacy Projection:</strong> AI narrative analysis of Kohli's career arc suggests he will finish as the <strong>greatest ODI batter of all time</strong> by statistical consensus, with a legacy shaped equally by his <strong>mental resilience</strong> and <strong>cultural impact</strong> on Indian cricket — transcending sport into national identity.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-logo">WIKIBIBIA</div>
+  <div style="font-family:'Space Mono',monospace;font-size:.65rem;color:var(--gold);letter-spacing:4px;margin-top:4px;">MAC 2.0 — CHALLENGE II — SPORT GENRE</div>
+  <div class="footer-sub">
+    Interactive biography dashboard for <strong>Virat Kohli</strong> | Built for WikiBIdia Modelling Avengers Cup<br>
+    Designed with narrative flow, analytical depth, and AI-driven insights.
+  </div>
+  <div class="footer-sources">
+    <span class="source-tag">Wikipedia</span>
+    <span class="source-tag">ESPN Cricinfo</span>
+    <span class="source-tag">ICC Official Records</span>
+    <span class="source-tag">BCCI Statistics</span>
+    <span class="source-tag">Statsguru</span>
+    <span class="source-tag">IPL Official Data</span>
+    <span class="source-tag">Forbes (Brand Valuation)</span>
+    <span class="source-tag">AI Narrative Analysis</span>
+  </div>
+  <div style="margin-top:20px;font-size:.68rem;color:var(--muted);line-height:1.8;max-width:700px;margin-left:auto;margin-right:auto;">
+    <strong>Assumptions &amp; Approximations:</strong> Career statistics reflect data available up to mid-2024. Annual run tallies are approximated from publicly available Cricinfo records. Brand valuation figures are estimates from Forbes India 2023. Sentiment analysis percentages are AI-modeled approximations based on public media pattern analysis, not raw social media API data. All data used is open-source and publicly available.
+  </div>
+</footer>
+
+<script>
+// ================== CURSOR ==================
+const cursor = document.getElementById('cursor');
+const ring = document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{
+  mx=e.clientX; my=e.clientY;
+  cursor.style.left=(mx-6)+'px';
+  cursor.style.top=(my-6)+'px';
+});
+function animRing(){
+  rx+=(mx-rx-18)*.12; ry+=(my-ry-18)*.12;
+  ring.style.left=rx+'px'; ring.style.top=ry+'px';
+  requestAnimationFrame(animRing);
+}
+animRing();
+document.querySelectorAll('button,a,.kpi-card,.scroll-dot,.phase,.trophy-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>cursor.style.transform='scale(2)');
+  el.addEventListener('mouseleave',()=>cursor.style.transform='scale(1)');
+});
+
+// ================== SCROLL NAV ==================
+function scrollToSection(id){
+  document.getElementById(id).scrollIntoView({behavior:'smooth'});
+}
+function scrollTo(el){el.scrollIntoView({behavior:'smooth'});}
+
+// ================== PROGRESS BAR ==================
+window.addEventListener('scroll',()=>{
+  const total=document.body.scrollHeight-window.innerHeight;
+  const pct=(window.scrollY/total)*100;
+  document.getElementById('progress-bar').style.width=pct+'%';
+  updateNav();
+  animateOnScroll();
+  animateStatBars();
+});
+
+// ================== SECTION INDICATOR ==================
+const sections=['s1','s2','s3','s4','s5'];
+const navBtns=document.querySelectorAll('.nav-btn');
+const scrollDots=document.querySelectorAll('.scroll-dot');
+function updateNav(){
+  let current=0;
+  sections.forEach((id,i)=>{
+    const el=document.getElementById(id);
+    if(el&&window.scrollY>=el.offsetTop-200) current=i;
+  });
+  document.getElementById('section-indicator').textContent='0'+(current+1)+' / 05';
+  navBtns.forEach((b,i)=>b.classList.toggle('active',i===current));
+  scrollDots.forEach((d,i)=>d.classList.toggle('active',i===current));
+}
+
+// ================== SCROLL ANIMATIONS ==================
+function animateOnScroll(){
+  document.querySelectorAll('.tl-item,.phase').forEach(el=>{
+    const rect=el.getBoundingClientRect();
+    if(rect.top<window.innerHeight*0.85) el.classList.add('visible');
+  });
+}
+
+// ================== STAT BARS ANIMATE ==================
+let barsAnimated=false;
+function animateStatBars(){
+  const sec4=document.getElementById('s4');
+  if(!sec4) return;
+  const rect=sec4.getBoundingClientRect();
+  if(rect.top<window.innerHeight*0.6&&!barsAnimated){
+    barsAnimated=true;
+    document.querySelectorAll('.stat-bar-fill').forEach(el=>{
+      setTimeout(()=>{ el.style.width=el.getAttribute('data-w'); },200);
+    });
+  }
+}
+
+// ================== KPI COUNTER ==================
+function animateCount(id,target,prefix='',suffix=''){
+  const el=document.getElementById(id);
+  if(!el) return;
+  let start=0; const dur=1800;
+  const step=target/dur*16;
+  const interval=setInterval(()=>{
+    start=Math.min(start+step,target);
+    el.textContent=prefix+Math.floor(start).toLocaleString()+suffix;
+    if(start>=target) clearInterval(interval);
+  },16);
+}
+setTimeout(()=>{
+  animateCount('cnt-test',9230);
+  animateCount('cnt-odi',14148);
+  animateCount('cnt-t20',4188);
+  animateCount('cnt-tons',81);
+  animateCount('cnt-ipl',8004);
+  animateCount('cnt-matches',567);
+},600);
+
+// ================== CHARTS ==================
+Chart.defaults.color='#7a8199';
+Chart.defaults.font.family="'DM Sans',sans-serif";
+
+// CAREER RUNS CHART
+const careerCtx=document.getElementById('careerChart').getContext('2d');
+const careerYears=['2008','2009','2010','2011','2012','2013','2014','2015','2016','2017','2018','2019','2020','2021','2022','2023','2024'];
+const careerODI=[0,158,995,1381,1026,634,1202,921,739,1460,1202,1377,0,156,673,1042,442];
+new Chart(careerCtx,{
+  type:'bar',
+  data:{
+    labels:careerYears,
+    datasets:[{
+      label:'ODI Runs',
+      data:careerODI,
+      backgroundColor:careerODI.map(v=>v>=1200?'rgba(245,200,66,0.9)':'rgba(245,200,66,0.35)'),
+      borderColor:'rgba(245,200,66,0)',
+      borderRadius:6,
+    }]
+  },
+  options:{
+    responsive:true,
+    plugins:{
+      legend:{display:false},
+      tooltip:{
+        callbacks:{
+          label:ctx=>`  ${ctx.raw} ODI runs in ${ctx.label}`
+        }
+      }
+    },
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{font:{size:11}}},
+      y:{grid:{color:'rgba(255,255,255,0.04)'},ticks:{font:{size:11}}}
+    }
+  }
+});
+
+// FORMAT CHART (switchable)
+const fmtCtx=document.getElementById('formatChart').getContext('2d');
+const fmtData={
+  odi:{
+    labels:['2010','2012','2014','2016','2017','2018','2019','2021','2022','2023'],
+    data:[995,1026,1202,739,1460,1202,1377,156,673,1042],
+    color:'rgba(245,200,66,0.8)'
+  },
+  test:{
+    labels:['2011','2012','2014','2015','2016','2017','2018','2019','2022','2023'],
+    data:[456,286,692,640,1215,1059,1322,400,310,741],
+    color:'rgba(59,130,246,0.8)'
+  },
+  t20:{
+    labels:['2012','2014','2016','2017','2018','2019','2021','2022','2023','2024'],
+    data:[168,288,641,299,211,466,228,781,637,152],
+    color:'rgba(56,178,172,0.8)'
+  },
+  ipl:{
+    labels:['2011','2013','2015','2016','2017','2018','2019','2021','2022','2023'],
+    data:[557,634,505,973,308,530,464,405,341,639],
+    color:'rgba(230,57,70,0.8)'
+  }
+};
+let fmtChart=new Chart(fmtCtx,{
+  type:'line',
+  data:{
+    labels:fmtData.odi.labels,
+    datasets:[{
+      label:'Runs',
+      data:fmtData.odi.data,
+      borderColor:fmtData.odi.color,
+      backgroundColor:'rgba(245,200,66,0.06)',
+      fill:true,
+      tension:.4,
+      pointBackgroundColor:'rgba(245,200,66,1)',
+      pointRadius:4
+    }]
+  },
+  options:{
+    responsive:true,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,0.04)'}},
+      y:{grid:{color:'rgba(255,255,255,0.04)'}}
+    }
+  }
+});
+
+function switchFormat(fmt,btn){
+  document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+  btn.classList.add('active');
+  const d=fmtData[fmt];
+  fmtChart.data.labels=d.labels;
+  fmtChart.data.datasets[0].data=d.data;
+  fmtChart.data.datasets[0].borderColor=d.color;
+  fmtChart.data.datasets[0].backgroundColor=d.color.replace('0.8','0.06');
+  fmtChart.data.datasets[0].pointBackgroundColor=d.color;
+  fmtChart.update();
+}
+
+// RADAR CHART
+const radarCtx=document.getElementById('radarChart').getContext('2d');
+new Chart(radarCtx,{
+  type:'radar',
+  data:{
+    labels:['Technique','Power','Running','Consistency','Chasing','Pressure','Longevity'],
+    datasets:[{
+      label:'Kohli',
+      data:[95,78,85,98,97,96,94],
+      borderColor:'rgba(245,200,66,0.9)',
+      backgroundColor:'rgba(245,200,66,0.1)',
+      pointBackgroundColor:'rgba(245,200,66,1)',
+      pointRadius:4
+    },{
+      label:'Format Avg',
+      data:[70,70,70,70,70,70,70],
+      borderColor:'rgba(255,255,255,0.15)',
+      backgroundColor:'rgba(255,255,255,0.04)',
+      pointBackgroundColor:'rgba(255,255,255,0.4)',
+      pointRadius:3
+    }]
+  },
+  options:{
+    responsive:true,
+    plugins:{
+      legend:{
+        labels:{color:'#7a8199',font:{size:10}}
+      }
+    },
+    scales:{
+      r:{
+        grid:{color:'rgba(255,255,255,0.08)'},
+        angleLines:{color:'rgba(255,255,255,0.06)'},
+        ticks:{display:false},
+        pointLabels:{color:'#7a8199',font:{size:10}},
+        min:0,max:100,
+        suggestedMin:0,suggestedMax:100
+      }
+    }
+  }
+});
+
+// CENTURY CHART
+const cenCtx=document.getElementById('centuryChart').getContext('2d');
+new Chart(cenCtx,{
+  type:'line',
+  data:{
+    labels:['2008','2010','2012','2014','2016','2018','2019','2021','2022','2023','2024'],
+    datasets:[{
+      label:'Cumulative Centuries',
+      data:[1,5,14,22,31,43,47,47,49,80,81],
+      borderColor:'rgba(230,57,70,0.9)',
+      backgroundColor:'rgba(230,57,70,0.06)',
+      fill:true,tension:.4,
+      pointBackgroundColor:'rgba(230,57,70,1)',pointRadius:4
+    }]
+  },
+  options:{
+    responsive:true,
+    plugins:{legend:{display:false}},
+    scales:{
+      x:{grid:{color:'rgba(255,255,255,0.04)'}},
+      y:{grid:{color:'rgba(255,255,255,0.04)'},title:{display:true,text:'Centuries',color:'#7a8199',font:{size:10}}}
+    }
+  }
+});
+
+// Initial trigger
+animateOnScroll();
+updateNav();
+</script>
+</body>
+</html>
